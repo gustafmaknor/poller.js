@@ -1,0 +1,6 @@
+#Exclude OS X folder attributes
+.DS_Store
+
+#Sublime
+dStore.sublime-project
+dStore.sublime-workspace
