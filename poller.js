@@ -1,4 +1,4 @@
-(function(global_context, undefined){
+(function(ctx, undefined){
     "use strict";
 
     var poller={
@@ -17,7 +17,7 @@
         **/
         createPoller:function(def){
         var poller ={
-        context:(def.context || {}),
+        context:(def.context || ctx),
             delay:def.delay || 1000,
             run:true,
             start:function(delay){
@@ -48,11 +48,10 @@
                 }
             };
             (function(poller){
-                var m=((typeof def.asyncCallbackIndex)===(typeof 1))?
+                var m=(typeof def.callback)==='function')?
                  (function(){
-                    var fn=def.args[def.asyncCallbackIndex];
+                    var fn=def.callback;
                     return function(){
-                        console.log("restart on callback");
                         fn.apply(poller.context, arguments);
                         poller.start();
                     }
@@ -60,13 +59,12 @@
                 :(function(){
                     var fn=def.method;
                     return function(){
-                        console.log("restart on initiator");
                         fn.apply(poller.context, def.args);
                         poller.start();
                     }
                 })();
-                if(typeof def.args[def.asyncCallbackIndex]==='function'){
-                    def.args[def.asyncCallbackIndex]=m;
+                if(typeof def.callback==='function'){
+                    def.callback=m;
                 }
                 else{
                     def.method=m;
@@ -75,5 +73,5 @@
         return poller;
         }
     }
-        global_context.poller=poller;
+        ctx.poller=poller;
 })(this)
